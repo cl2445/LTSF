@@ -1,8 +1,9 @@
+__pycache__/
 *.pyc
-*.pth
-dataset/
-result.txt
+*.log
+checkpoints/
 test_results/
 results/
-logs/
-.DS_Store
+*.npy
+*.csv
+.idea/  # 忽略 PyCharm 配置文件

@@ -21,6 +21,37 @@ class moving_avg(nn.Module):
         x = x.permute(0, 2, 1)
         return x
 
+class moving_max(nn.Module):
+    """
+    Moving max block to highlight the trend of time series
+    """
+    def __init__(self, kernel_size, stride):
+        super(moving_max, self).__init__()
+        self.kernel_size = kernel_size
+        # 使用 nn.MaxPool1d 替换 nn.AvgPool1d
+        self.max_pool = nn.MaxPool1d(kernel_size=kernel_size, stride=stride, padding=0)
+
+    def forward(self, x):
+        # padding on the both ends of time series
+        front = x[:, 0:1, :].repeat(1, (self.kernel_size - 1) // 2, 1)
+        end = x[:, -1:, :].repeat(1, (self.kernel_size - 1) // 2, 1)
+        x = torch.cat([front, x, end], dim=1)
+        x = self.max_pool(x.permute(0, 2, 1))
+        x = x.permute(0, 2, 1)
+        return x
+
+# class series_decomp(nn.Module):
+#     """
+#     Series decomposition block
+#     """
+#     def __init__(self, kernel_size):
+#         super(series_decomp, self).__init__()
+#         self.moving_avg = moving_avg(kernel_size, stride=1)
+#
+#     def forward(self, x):
+#         moving_mean = self.moving_avg(x)
+#         res = x - moving_mean
+#         return res, moving_mean
 
 class series_decomp(nn.Module):
     """
@@ -28,12 +59,13 @@ class series_decomp(nn.Module):
     """
     def __init__(self, kernel_size):
         super(series_decomp, self).__init__()
-        self.moving_avg = moving_avg(kernel_size, stride=1)
+        # 使用 moving_max 替换 moving_avg
+        self.moving_max = moving_max(kernel_size, stride=1)
 
     def forward(self, x):
-        moving_mean = self.moving_avg(x)
-        res = x - moving_mean
-        return res, moving_mean
+        moving_max_value = self.moving_max(x)
+        res = x - moving_max_value
+        return res, moving_max_value
 
 class Model(nn.Module):
     """

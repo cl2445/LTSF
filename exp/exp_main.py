@@ -1,23 +1,61 @@
 from data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
-from models import Informer, Autoformer, Transformer, DLinear, Linear, NLinear
+from models import Informer, Autoformer, Transformer, DLinear, Linear, NLinear, TestLinear, FFTDecompLinear,Star
 from utils.tools import EarlyStopping, adjust_learning_rate, visual, test_params_flop
 from utils.metrics import metric
-
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
 from torch import optim
-
 import os
 import time
-
 import warnings
 import matplotlib.pyplot as plt
 import numpy as np
-
 warnings.filterwarnings('ignore')
+
+# 定义组合损失函数类
+class MAEMSELoss(nn.Module):
+    def __init__(self, mse_weight=0.5):
+        super(MAEMSELoss, self).__init__()
+        self.mse_weight = mse_weight
+        self.mse_loss = nn.MSELoss()
+        self.mae_loss = nn.L1Loss()
+
+    def forward(self, pred, true):
+        mse_loss = self.mse_loss(pred, true)
+        mae_loss = self.mae_loss(pred, true)
+        combined_loss = self.mse_weight * mse_loss + (1 - self.mse_weight) * mae_loss
+        return combined_loss
+
+class HuberLoss(nn.Module):
+    def __init__(self, delta=1.0):
+        super(HuberLoss, self).__init__()
+        self.delta = delta
+
+    def forward(self, y_true, y_pred):
+        error = y_true - y_pred
+        abs_error = torch.abs(error)
+
+        # 使用条件判断选择 MSE 或 MAE
+        quadratic = torch.where(abs_error <= self.delta, 0.5 * error ** 2,self.delta * abs_error - 0.5 * self.delta ** 2)
+
+        return quadratic.mean()  # 返回均值作为损失
+
+
+class CombinedLoss(nn.Module):
+    def __init__(self, huber_weight=0.5, delta=1.0):
+        super(CombinedLoss, self).__init__()
+        self.huber_weight = huber_weight
+        self.huber_loss = HuberLoss(delta=delta)
+        self.mae_loss = nn.L1Loss()
+
+    def forward(self, pred, true):
+        huber_loss = self.huber_loss(pred, true)
+        mae_loss = self.mae_loss(pred, true)
+        combined_loss = self.huber_weight * huber_loss + (1 - self.huber_weight) * mae_loss
+        return combined_loss
 
 class Exp_Main(Exp_Basic):
     def __init__(self, args):
@@ -31,6 +69,9 @@ class Exp_Main(Exp_Basic):
             'DLinear': DLinear,
             'NLinear': NLinear,
             'Linear': Linear,
+            'TestLinear': TestLinear,
+            'FFTDecompLinear':FFTDecompLinear,
+            'Star': Star
         }
         model = model_dict[self.args.model].Model(self.args).float()
 
@@ -47,8 +88,12 @@ class Exp_Main(Exp_Basic):
         return model_optim
 
     def _select_criterion(self):
-        criterion = nn.MSELoss()
+        criterion = CombinedLoss()  # 调整权重以达到期望的损失函数组合
         return criterion
+
+    # def _select_criterion(self):
+    #     criterion = nn.MSELoss()
+    #     return criterion
 
     def vali(self, vali_data, vali_loader, criterion):
         total_loss = []

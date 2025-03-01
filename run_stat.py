@@ -45,6 +45,10 @@ parser.add_argument('--itr', type=int, default=2, help='experiments times')
 parser.add_argument('--batch_size', type=int, default=100, help='batch size of train input data')
 parser.add_argument('--des', type=str, default='test', help='exp description')
 
+# 如果使用 argparse 定义参数
+parser.add_argument('--d_core', type=int, default=16, help='Dimension of core features for STAR module')
+
+
 args = parser.parse_args()
 args.use_gpu = False
 print('Args in experiment:')

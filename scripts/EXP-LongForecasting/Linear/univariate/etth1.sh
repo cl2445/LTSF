@@ -89,5 +89,8 @@ python -u run_longExp.py \
   --pred_len 720 \
   --enc_in 1 \
   --des 'Exp' \
-  --itr 1 --batch_size 32 --feature S --learning_rate 0.005 >logs/LongForecasting/$model_name'_'fS_ETTh1_336_720.log
+  --itr 1 \
+  --batch_size 32 \
+  --feature S \
+  --learning_rate 0.005 >logs/LongForecasting/$model_name'_'fS_ETTh1_336_720.log
 
