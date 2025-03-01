@@ -1,2 +1,0 @@
-# LTSF
-longtime series forecasting
