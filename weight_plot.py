@@ -1,29 +1,36 @@
 import torch
 import numpy as np
-import os 
+import os
 import matplotlib.pyplot as plt
-
-model_name = ''
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+model_name = 'DLinear'
+found = False
 for root, dirs, files in os.walk("checkpoints"):
     for name in files:
         model_path = os.path.join(root, name)
         if model_name not in model_path:
             continue
-        weights = torch.load(model_path,map_location=torch.device('cpu'))
+        weights = torch.load(model_path, map_location=torch.device('cpu'))
         weights_list = {}
         weights_list['seasonal'] = weights['Linear_Seasonal.weight'].numpy()
         weights_list['trend'] = weights['Linear_Trend.weight'].numpy()
 
-        save_root = 'weights_plot/%s'%root.split('/')[1]
+        save_root = os.path.join('weights_plot', os.path.basename(root))
         if not os.path.exists('weights_plot'):
             os.mkdir('weights_plot')
         if not os.path.exists(save_root):
             os.mkdir(save_root)
 
-        for w_name,weight in weights_list.items():
-            fig,ax=plt.subplots()
-            im=ax.imshow(weight,cmap='plasma_r')
-            fig.colorbar(im,pad=0.03)
-            plt.savefig(os.path.join(save_root,w_name + '.pdf'),dpi=500)
+        for w_name, weight in weights_list.items():
+            fig, ax = plt.subplots()
+            im = ax.imshow(weight, cmap='hot')
+            fig.colorbar(im, pad=0.03)
+            plt.savefig(os.path.join(save_root, w_name + '.pdf'), dpi=500)
             plt.close()
+        found = True
+        break  # 只处理第一个文件
+    if found:
+        break
+
  

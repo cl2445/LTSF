@@ -4,7 +4,7 @@ if not exist ".\logs" mkdir ".\logs"
 if not exist ".\logs\LongForecasting" mkdir ".\logs\LongForecasting"
 
 set seq_len=336
-set model_name=DLinear
+set model_name=Star
 set GPU_ID=0
 
 python -u run_longExp.py ^
@@ -14,7 +14,7 @@ python -u run_longExp.py ^
   --model_id weather_%seq_len%_96 ^
   --model %model_name% ^
   --data custom ^
-  --features M ^
+  --features MS ^
   --seq_len %seq_len% ^
   --pred_len 96 ^
   --enc_in 21 ^
@@ -30,7 +30,7 @@ python -u run_longExp.py ^
   --model_id weather_%seq_len%_192 ^
   --model %model_name% ^
   --data custom ^
-  --features M ^
+  --features MS ^
   --seq_len %seq_len% ^
   --pred_len 192 ^
   --enc_in 21 ^
@@ -46,7 +46,7 @@ python -u run_longExp.py ^
   --model_id weather_%seq_len%_336 ^
   --model %model_name% ^
   --data custom ^
-  --features M ^
+  --features MS ^
   --seq_len %seq_len% ^
   --pred_len 336 ^
   --enc_in 21 ^
@@ -62,7 +62,7 @@ python -u run_longExp.py ^
   --model_id weather_%seq_len%_720 ^
   --model %model_name% ^
   --data custom ^
-  --features M ^
+  --features MS ^
   --seq_len %seq_len% ^
   --pred_len 720 ^
   --enc_in 21 ^

@@ -4,7 +4,7 @@ if not exist ".\logs" mkdir ".\logs"
 if not exist ".\logs\LongForecasting" mkdir ".\logs\LongForecasting"
 
 set seq_len=336
-set model_name=FFTDecompLinear
+set model_name=FDTCNLinear
 set GPU_ID=0
 
 python -u run_longExp.py ^

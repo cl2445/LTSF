@@ -10,7 +10,7 @@ if not exist ".\logs\LongForecasting" (
 
 set model_name=DLinear
 
-:: ETTh1, univariate results, pred_len= 24 48 96 192 336 720
+:: ETTh1, univariate results, pred_len= 96 192 336 720
 
  call python -u run_longExp.py ^
    --is_training 1 ^
