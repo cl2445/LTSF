@@ -3,18 +3,7 @@
 This repo is the official Pytorch implementation of LTSF-Linear: "[Are Transformers Effective for Time Series Forecasting?](https://arxiv.org/pdf/2205.13504.pdf)". 
 
 
-## Updates
-- [2024/01/28] Our model has been included in [NeuralForecast](https://github.com/Nixtla/neuralforecast). Special thanks to the contributor [@cchallu](https://github.com/cchallu)!
-- [2022/11/23] Accepted to AAAI 2023 with three strong accept! We also release a **[benchmark for long-term time series forecasting](LTSF-Benchmark.md)** for further research.
-- [2022/08/25] We update our [paper](https://arxiv.org/pdf/2205.13504.pdf) with comprehensive analyses on why existing LTSF-Transformers do not work well on the LTSF problem!
-- [2022/08/25] Besides DLinear, we're excited to add two Linear models to the paper and this repo. Now we have an LTSF-Linear family!
-  - Linear: Just one linear layer.
-  - DLinear: Decomposition Linear to handle data with trend and seasonality patterns.
-  - NLinear: A Normalized Linear to deal with train-test set distribution shifts. See section 'LTSF-Linear' for more details. 
 
-- [2022/08/25] We update some scripts of LTSF-Linear. 
-  - Linear, NLinear, and DLinear use the same scripts.
-  - Some results of DLinear are slightly different now.
 
 
 
